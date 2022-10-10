@@ -234,8 +234,8 @@ MyPoly MyPoly::Mult(MyPoly B) {
             index++;
         }
     }
-    for (int i = 0; i < result.size; ++i) {
-        for (int j = 0; j < result.size; ++j) {
+    for (int i = 0; i < result.size; i++) {
+        for (int j = 0; j < result.size; j++) {
             if (result.terms[j].expon < result.terms[i].expon) {
                 int expon_temp = result.terms[j].expon;
                 result.terms[j].expon = result.terms[i].expon;
