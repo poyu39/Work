@@ -14,7 +14,8 @@
         "limits": "cpp",
         "valarray": "cpp",
         "xutility": "cpp",
-        "initializer_list": "cpp"
+        "initializer_list": "cpp",
+        "random": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled",
 }
