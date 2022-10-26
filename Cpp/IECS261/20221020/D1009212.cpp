@@ -1,135 +1,173 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<time.h>
+#include<string.h>
+#include<math.h>
 #define MAX 40
 #define Len 20
-
-struct LongInt {
+struct LongInt
+{
 	int MyInt[MAX];
 	bool IsPositive;
 	
 	LongInt();
 	LongInt(int);
-	void Init();   					//利用亂數產生一個長度小於19的值
-	void Init(int num);  			//指定一個長度小於19的值
-	void operator=(int); 			//運算子多載
-	void Zero();  					//將本身的陣列初始為0
-	void Show(); 					//顯示陣列
+	LongInt(const char*);
+	void Init();   					
+	void Init(int num);  			
+	LongInt operator=(int); 		
+	void Zero();  					
+	void Show(); 					
 	
-	int Compare(LongInt b); 		//比較本身跟長整數b之間何者較大，若大於b則回傳1，反之，則回傳-1
+	int Compare(LongInt b); 		
 	bool operator>(LongInt b);
 	bool operator<(LongInt b);
 	bool operator==(LongInt b);
 	
 	LongInt Add(LongInt);
-	LongInt operator+(LongInt); 	//運算子多載
+	LongInt operator+(LongInt); 	
 	LongInt Sub(LongInt);
-	LongInt operator-(LongInt); 	//運算子多載  
+	LongInt operator-(LongInt); 	
 	
 //	HW
-//	LongInt Multi(LongInt);
-//	LongInt Div(LongInt);
+	LongInt Multi(LongInt);
+	LongInt operator*(LongInt); 
+	int Div(LongInt);
+	int operator/(LongInt); 
 };
 
-int main() {
-	LongInt a(99999999);
-	LongInt b(22222222); 
+int main(){
+	// LongInt a = "18468284177722972105";
+	// LongInt b = "57485431294651594451";  
+	// LongInt a = "57485431294651594451";
+	// LongInt b = "22";  
 	LongInt c;
-    LongInt d;
-
+	LongInt d;
+	LongInt e; 
+	int div_ans; 
+	
 	printf("a = ");
 	a.Show();
-	
-    printf("b = ");
+
+	printf("b = ");
 	b.Show();
-	
-    c = a + b;
-	printf("c = ");
+
+	printf("a+b = ");
+	c = a + b;
 	c.Show();
 	
-    if(a > b)
-		printf("a > b\n");
-	else if(a < b)
-		printf("a < b\n");
-	else
-		printf("a == b\n");
+	printf("a-b = ");
+	d = a - b;
+	d.Show();
+
+	printf("a*b = ");
+	e = a * b;
+	e.Show();
+
+	printf("a/b =  ");
+	div_ans = a / b;
+	printf("%d\n", div_ans);
 	
-    
-    d = a - b;
-    printf("d = ");
-    d.Show();
-	
-    system("pause");
-	return 0;
 }
 
-// 利用亂數產生一個長度小於19的值
-void LongInt::Init() {
-    srand(time(NULL));
-    for(int i = 0; i < Len; i++) {
-		MyInt[i] = rand() % 10;
-	}
-}
-
-// 指定一個長度小於19的值
-void LongInt::Init(int num) {
-    for(int i = 0; i < num; i++) {
-		MyInt[i] = rand() % 10;
-	}
-}
-
-// 建構子 利用亂數產生一個長度小於19的值
+// �Q�ζüƲ��ͤ@�Ӫ��פp��19���� 
 LongInt::LongInt() {
 	Zero();
-	Init();
+	IsPositive = true;
+	// srand(time(NULL));
+	// for(int i = 0; i < Len; i++) {
+		// MyInt[i] = rand() % 10;
+	// }
 }
 
-// 建構子 利用亂數產生一個長度小於19的值
+// �Q�ζüƲ��ͤ@�Ӫ��פp��num���� 
 LongInt::LongInt(int num) {
 	Zero();
+	IsPositive = true;
 	srand(time(NULL));
-	for(int i = 0; i < Len; i++)
-	{
+	if(num >= 0) {
+		IsPositive = true;
+	}else {
+		IsPositive = false;
+		num = num * -1;
+	}
+	
+	for(int i = 0; i < Len; i++) {
 		MyInt[i] = num % 10;
 		num = num / 10;
 	}
-	
 }
 
-// 初始化0
+// �Q�Φr�겣�ͤ@�Ӫ��פp��num���� 
+LongInt::LongInt(const char *str) {
+	int i = 0; 
+	int len = strlen(str);
+	Zero();
+	while(str[i] != '\0') {
+		MyInt[i] = str[len - 1 - i] - '0';
+		i++;
+	}
+	if(str[0] == '-') {
+		IsPositive = false;
+	}else {
+		IsPositive = true;
+	}
+}
+
+// ���ͤ@�Ӫ��׬�19�� 0 
 void LongInt::Zero() {
-	for(int i = 0; i < Len; i++) {
+	for(int i = 0; i < MAX; i++) {
 		MyInt[i] = 0;
 	}
 }
-void LongInt::operator=(int num) {
-    for(int i = 0; i < Len; i++) {
-		MyInt[i] = num;
-	}
-    if (num >= 0) {
-        IsPositive = true;
-    } else {
-        IsPositive = false;
-    }
-}
 
-// 印出
+// �L�X�}�C
 void LongInt::Show() {
-	if (!IsPositive) {
-        printf("-");
-    }
-    for(int i = Len - 1; i >= 0; i--) {
-		printf("%d", MyInt[i]);
+	if(IsPositive) {
+		printf(" ");
+	}else {
+		printf("-");
+	}
+	if(MyInt[21] != 0 && MyInt[0] > 0) {
+		for(int i = MAX - 1; i >= 0; i--) {
+			printf("%d", MyInt[i]);
+		}
+	}else if(MyInt[21] == 0 && MyInt[0] > 0) {
+		for(int i = Len - 1; i >= 0; i--) {
+			printf("%d", MyInt[i]);
+		}
+	}else {
+		printf("%d", 0);
 	}
 	printf("\n");
 }
 
-// 比較本身跟長整數b之間何者較大，若大於b則回傳1，反之，則回傳-1
-int LongInt::Compare(LongInt b)
-{
-	for(int i = Len-1; i >= 0; i--)
-	{
-		if(MyInt[i]>b.MyInt[i])
+// �[�k
+LongInt LongInt::Add(LongInt b) {
+	LongInt result = 0;
+	for(int i = 0; i < Len; i++) {
+		result.MyInt[i] = MyInt[i] + b.MyInt[i];
+	}
+	
+	for(int i = 0; i < Len; i++) {
+		if(result.MyInt[i] >= 10) {
+			result.MyInt[i+1] += result.MyInt[i] / 10;
+			result.MyInt[i] = result.MyInt[i] % 10;
+		}
+	}
+
+	return result;
+}
+
+// �B��l�h��
+LongInt LongInt::operator+(LongInt b) {
+	return Add(b);
+}
+
+// ���
+int LongInt::Compare(LongInt b) {
+	for(int i = Len - 1; i >= 0; i--) {
+		if(MyInt[i] > b.MyInt[i])
 			return 1;
 		else if(MyInt[i]<b.MyInt[i])
 			return -1;
@@ -137,7 +175,7 @@ int LongInt::Compare(LongInt b)
 	return 0;
 }
 
-// 邏輯子多載 >
+// �j��
 bool LongInt::operator>(LongInt b) {
 	if(Compare(b) == 1)
 		return true;
@@ -145,7 +183,7 @@ bool LongInt::operator>(LongInt b) {
 		return false;
 }
 
-// 邏輯子多載 <
+// �p��
 bool LongInt::operator<(LongInt b) {
 	if(Compare(b) == -1)
 		return true;
@@ -153,7 +191,7 @@ bool LongInt::operator<(LongInt b) {
 		return false;
 }
 
-// 邏輯子多載 ==
+// ����
 bool LongInt::operator==(LongInt b) {
 	if(Compare(b) == 0)
 		return true;
@@ -161,70 +199,78 @@ bool LongInt::operator==(LongInt b) {
 		return false;
 }
 
-// 加法
-LongInt LongInt::Add(LongInt b) {
-	LongInt result=0;
-	for(int i = 0; i < Len; i++) {
-		result.MyInt[i] = MyInt[i] + b.MyInt[i];
-	}
-	for(int i = 0; i < Len; i++) {
-		if(result.MyInt[i] >= 10) {
-			result.MyInt[i+1] += result.MyInt[i] / 10;
-			result.MyInt[i] = result.MyInt[i] % 10;
-		}
-	}
-	return result;
-}
-
-// 運算子多載 +
-LongInt LongInt::operator+(LongInt b) {
-	LongInt result = 0;
-	for(int i = 0; i < Len; i++) {
-		result.MyInt[i] = MyInt[i] + b.MyInt[i];
-	}
-	for(int i = 0; i < Len; i++) {
-		if(result.MyInt[i] >= 10) {
-			result.MyInt[i+1] += result.MyInt[i] / 10;
-			result.MyInt[i] = result.MyInt[i] % 10;
-		}
-	}
-	return result;
-}
-
-// 減法
+// ��k
 LongInt LongInt::Sub(LongInt b) {
-	LongInt result = 0;
-    for(int i = 0; i < Len; i++) {
-		result.MyInt[i] = MyInt[i] - b.MyInt[i];
+	LongInt result;
+	if(Compare(b) == 1 || Compare(b) == 0) {
+		result.IsPositive = true;
+		for(int i = 0; i < Len; i++) {
+			result.MyInt[i] = MyInt[i] - b.MyInt[i];
+		}
+	}else {
+		result.IsPositive=false;
+		for(int i = 0; i < Len; i++) {
+			result.MyInt[i] = b.MyInt[i] - MyInt[i];
+		}
 	}
 	for(int i = 0; i < Len; i++) {
 		if(result.MyInt[i] < 0) {
-			result.MyInt[i + 1] -= 1;
 			result.MyInt[i] += 10;
-		}
+			result.MyInt[i+1]--;
+		} 
 	}
 	return result;
 }
 
-// 運算子多載 -
+// �B��l�h��
 LongInt LongInt::operator-(LongInt b) {
-	LongInt result;
-    if (MyInt > b.MyInt) {
-        for(int i = 0; i < Len; i++) {
-		    result.MyInt[i] = MyInt[i] - b.MyInt[i];
-	    }
-        result.IsPositive = true;
-    } else {
-        for(int i = 0; i < Len; i++) {
-		    result.MyInt[i] = b.MyInt[i] - MyInt[i];
-	    }
-        result.IsPositive = false;
-    }
+	return Sub(b);
+}
+
+// �B��l�h��
+LongInt LongInt::operator=(int b) {
+	return LongInt(b); 	 
+}
+
+// ���k
+LongInt LongInt::Multi(LongInt b) {
+	LongInt resault;
 	for(int i = 0; i < Len; i++) {
-		if(result.MyInt[i] < 0) {
-			result.MyInt[i + 1]--;
-			result.MyInt[i] += 10;
+		for(int j = 0; j < Len; j++) {
+			resault.MyInt[i + j] += MyInt[i] * b.MyInt[j];
+			if(resault.MyInt[i + j] >= 10) {
+				resault.MyInt[i + j + 1] += (resault.MyInt[i + j] / 10);
+				resault.MyInt[i + j] = resault.MyInt[i + j] % 10;
+			}
 		}
 	}
-	return result;
+	return resault;
+}
+
+LongInt LongInt::operator*(LongInt b) {
+	return Multi(b);
+}
+
+// ���k
+int LongInt::Div(LongInt b) {
+	int resault = 0;
+	if(Compare(b) == -1) {
+		return 0;
+	}else if(Compare(b) == 0) {
+		return 1;
+	}else {
+		for(int i = 0; i < Len ; i++) {
+			while(Compare(b) != -1) {
+				for(int j = 0; j < Len; j++) {
+					MyInt[j] -= b.MyInt[j];
+				}
+				resault++;
+			}
+		}
+		return resault;
+	}	
+}
+
+int LongInt::operator/(LongInt b) {
+	return Div(b);
 }
