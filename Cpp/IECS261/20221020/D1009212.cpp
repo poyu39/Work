@@ -66,6 +66,8 @@ int main(){
 	printf("a/b = ");
 	f = a.Div(b);
 	f.Show();
+	
+	system("pause");
 }
 
 // 利用亂數產生一個長度小於19的值 
