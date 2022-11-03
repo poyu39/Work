@@ -1,0 +1,2 @@
+We must be know this step
+We want to determine the step count for a function that adds two-dimensional array.
