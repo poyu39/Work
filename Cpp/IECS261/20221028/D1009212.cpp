@@ -1,75 +1,68 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define MAX 150
+#define MAX 100
 
 struct MyStack {
-	int top;           // 堆疊頂端
-	char a[MAX];       // 堆疊主體
-	
+	int top;           
+	char a[MAX];    
+
     void Show();
     void Clear();
-	bool IsEmpty();    // 判斷堆疊是否為空，是則回傳1，否則0
-	bool IsFull();     // 判斷堆疊是否為滿，是則回傳1，否則0
-	void Push(char);   // 將一個字元傳進堆疊中
-	char Pop();        // 將一個字元從堆疊中拿出並回傳
-	MyStack() {		   // 建構子
+	bool IsEmpty();    
+	bool IsFull();     
+	void Push(char);   
+	char Pop();        
+	MyStack() {		   
 		top = -1;
 	}
 };
 
-void read_file(char* input, const char* file_name) {
+void ReadFile(char*, const char*);
+
+void EsCut(char*);
+
+int main() {
+    char input[MAX];
+    char file_name[] = "input.txt";
+    // ReadFile(input, "input.txt");
+    
     FILE* fptr = fopen(file_name,"r");
     int len = 0;
     while(!feof(fptr)) {
-        fscanf(fptr, "%c", &input[len]);
-        len++;
+        fgets(input, MAX, fptr);
+        EsCut(input);
     }
-    input[len] = '\0';
-    /*
-    for(int i = 0; i <= len; i++) {
-        printf("%c", input[i]);    
-    }
-    */
-}
-void es_cut(char*, int*);
-
-int main() {
-	MyStack es_str;
-    char input[100];
-    read_file(input, "input.txt");
-    int str_count = 0;
-    int count = 0;
-    int str = 2;
-
-    for(int i = 0; i <= str; i++) {
-        MyStack es_str;
-        for(int j = str_count; j <= MAX; j++) {
-            if(input[j] == '\n' || input[j] == '\0') {
-                break;
-                str++;
-            }
-            es_str.Push(input[j]);
-            if(count > 0)
-                count++;
-            
-            if(input[j] == 'e') {
-                count = 1;
-            }else if(input[j] == 's') {
-                for(int k = 0; k < count; k++) {
-                    es_str.Pop();
-                }
-                count = 0;
-            }
-            str_count++;
-        }
-        es_str.Show();
-        es_str.Clear();
-        str_count++;
-    }
-
     system("pause");
-
 	return 0;	
+}
+
+void ReadFile(char* input, const char* file_name) {
+    FILE* fptr = fopen(file_name,"r");
+    int len = 0;
+    while(!feof(fptr)) {
+        fgets(input, MAX, fptr);
+    }
+}
+
+void EsCut(char* input) {
+    MyStack es_str;
+    int count = 0;
+    for(int i = 0; i <= MAX; i++) {
+        if(input[i] == '\n' || input[i] == '\0')
+            break;
+        es_str.Push(input[i]);
+        if(count > 0)
+            count++;
+        if(input[i] == 'e') {
+            count = 1;
+        }else if(input[i] == 's') {
+            for(int j = 0; j < count; j++)
+                es_str.Pop();
+            count = 0;
+        }
+    }
+    es_str.Show();
+    es_str.Clear();
 }
 
 void MyStack::Show() {
