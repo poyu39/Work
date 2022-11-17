@@ -3,18 +3,28 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceRoot}",
+                "C:\\MinGW\\include",
+                "C:\\MinGW\\lib\\gcc\\mingw32\\6.3.0\\include",
+                "C:\\MinGW\\lib\\gcc\\mingw32\\6.3.0\\include\\c++"
             ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
-                "_UNICODE"
+                "__GNUC__=5",
+                "__cdecl=__attribute__((__cdecl__))"
             ],
-            "windowsSdkVersion": "10.0.16299.0",
-            "compilerPath": "C:/mingw64/bin/gcc.exe",
-            "cStandard": "c17",
-            "cppStandard": "c++17",
-            "intelliSenseMode": "gcc-x64"
+            "intelliSenseMode": "gcc-x64",
+            "browse": {
+                "path": [
+                    "${workspaceRoot}",
+                    "C:\\MinGW\\include",
+                    "C:\\MinGW\\lib\\gcc\\mingw32\\6.3.0\\include",
+                    "C:\\MinGW\\lib\\gcc\\mingw32\\6.3.0\\include\\c++"
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            }
         }
     ],
     "version": 4
