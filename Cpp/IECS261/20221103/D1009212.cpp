@@ -12,13 +12,20 @@ struct data {
 };
 
 struct SplitData {
+	data preitem[MAX];
 	data item[MAX];
 	data postitem[MAX];
-	int count;
+	int preitem_count;
+	int item_count;
+	int postitem_count;
 	void Split(char*);
+	void Clear();
 	void ShowInfix();	
+	void InfixToPre();
+
 	void InfixToPost();
-	void ShowPostfix(); 	
+	float PostOperation();
+	void ShowPostfix(); 
 };
 
 struct MyStack {
@@ -30,30 +37,26 @@ struct MyStack {
 	data Pop();
 	data Top();
 	MyStack() {
-		top=-1;
+		top = -1;
 	}
 };
 
-void read_file(char* input, const char* file_name) {
-    FILE* fptr = fopen(file_name,"r");
-    int len = 0;
-    while(!feof(fptr)) {
-        fscanf(fptr, "%c", &input[len]);
-        len++;
-    }
-    /*
-    for(int i = 0; i <= len; i++) {
-        printf("%c", input[i]);    
-    }
-    */
-}
-
 int main() {
-    char input[80];
-    read_file(input, "1103.txt");
-    SplitData DataInFix;
-    DataInFix.Split(input);
-    DataInFix.ShowInfix();
+    char input[MAX];
+	SplitData Data;
+	FILE* fptr = fopen("1103.txt","r");
+	printf("InFix To Post\n");
+    while(!feof(fptr)) {
+		printf("--------------------\n");
+        fgets(input, MAX, fptr);
+		Data.Split(input);
+		Data.InfixToPost();
+    	// Data.ShowInfix();
+		Data.ShowPostfix();
+		printf("result: %.2f\n", Data.PostOperation());
+    }
+	printf("--------------------\n");
+
     system("pause");
 	return 0;
 } 
@@ -94,7 +97,7 @@ data MyStack::Top() {
 }
 
 void SplitData::Split(char *str) {
-	count = 0;
+	item_count = 0;
 	int i = 0, j = 0;
 	char temp[MAX];
 	while(str[i] != '\0') {
@@ -106,48 +109,200 @@ void SplitData::Split(char *str) {
 			case '(':
 			case ')':
                 if(j != 0) {
-                temp[j] = '\0';
-                item[count].type = val;
-                item[count].value = atoi(temp);
-                printf("%d\n", item[count].value);
-                j = 0;
-                count++;
+					temp[j] = '\0';
+					item[item_count].type = val;
+					item[item_count].value = atoi(temp);
+					j = 0;
+					item_count++;
                 }
+                item[item_count].type = op;
+                item[item_count].oper = str[i];
+                item_count++;
                 
-                item[count].type = op;
-                item[count].oper = str[i];
-                printf("%c\n", item[count].oper);
-                count++;
-                break;
+				break;
+
 			default:
 				temp[j] = str[i];
 				j++;
+				break;
 		}
 		i++;
 	}
 
 	if(j != 0) {
 		temp[j] = '\0';
-	 	item[count].type = val;
-	 	item[count].value = atoi(temp);
-	 	printf("%d\n", item[count].value);
+	 	item[item_count].type = val;
+	 	item[item_count].value = atoi(temp);
 	 	j = 0;
-	 	count++;
+	 	item_count++;
 	}
 
-	for(int i = 0; i < count; i++) {
+	int bracket = 0;
+	for(int i = 0; i < item_count; i++) {
 		if(item[i].oper == '+' || item[i].oper == '-')
-			item[i].priority = 1;
+			item[i].priority = 1 + bracket;
 		else if(item[i].oper == '*' || item[i].oper == '/')
-			item[i].priority = 2;
+			item[i].priority = 2 + bracket;
+		else if(item[i].oper == '(' || item[i].oper == ')')
+			item[i].priority = -1;
+		
+		if(item[i].oper == '(') {
+			bracket+=2;
+		}else if(item[i].oper == ')') {
+			bracket-=2;
+		}
 	}
 }
 
 void SplitData::ShowInfix() {
-	for(int i = 0; i < count; i++) {
+	for(int i = 0; i < item_count; i++) {
 		if(item[i].type == val)
 			printf("%d", item[i].value);
 		else
 			printf("%c", item[i].oper);
 	}
+	printf("\n");
+}
+
+void SplitData::InfixToPost() {
+	MyStack s;
+	postitem_count = 0;
+	int i = 0 , j = 0;
+	for(int i = 0; i < item_count; i++) {
+		if(item[i].type == val) {
+			postitem[j]= item[i];
+			j++;
+		}else {
+			if(item[i].oper != '(' && item[i].oper != ')') {
+				if(s.IsEmpty())
+					s.Push(item[i]);
+				else{
+					while(s.a[s.top].priority >= item[i].priority && !s.IsEmpty()) {
+						if(s.a[s.top].priority > 0) {
+							postitem[j] = s.Pop();
+						}else {
+							s.Pop();
+						}
+						j++;
+					}
+					s.Push(item[i]);
+				}
+			}
+		}
+	}
+	while(!s.IsEmpty()) {
+		postitem[j] = s.Pop();
+		j++;
+	}
+	postitem_count = j;
+}
+
+float SplitData::PostOperation() {
+	float ans = 0;
+	float temp = 0;
+	int value_count = 0;
+	for(int i = 0; i < postitem_count; i++) {
+		if(postitem[i].type == op) {
+			if(value_count == 1) {
+				switch(postitem[i].oper) {
+					case '+':
+						ans += postitem[i-1].value;
+						break;
+					case '-':
+						ans -= postitem[i-1].value;
+						break;
+					case '*':
+						ans *= postitem[i-1].value;
+						break;
+					case '/':
+						ans /= postitem[i-1].value;
+						break;
+				}
+			}else if(value_count == 2) {
+				switch(postitem[i].oper) {
+					case '+':
+						temp = postitem[i-2].value + postitem[i-1].value;
+						break;
+					case '-':
+						temp = postitem[i-2].value - postitem[i-1].value;
+						break;
+					case '*':
+						temp = postitem[i-2].value * postitem[i-1].value;
+						break;
+					case '/':
+						temp = postitem[i-2].value / postitem[i-1].value;
+						break;
+				}
+				if(postitem[i+1].type == op) {
+					switch(postitem[i+1].oper) {
+						case '+':
+							ans += temp;
+							break;
+						case '-':
+							ans -= temp;
+							break;
+						case '*':
+							ans *= temp;
+							break;
+						case '/':
+							ans /= temp;
+							break;
+					}
+					i++;
+				}else {
+					ans += temp;
+				}
+			}
+			value_count = 0;
+			temp = 0;
+		}else {
+			value_count++;
+		}
+		// printf("%d ", postitem[i].type);
+		// printf("%2f\n", ans);
+	}
+	return ans;
+}
+
+void SplitData::ShowPostfix() {
+	for(int i = 0; i < postitem_count; i++) {
+		if(postitem[i].type == val)
+			printf(" %d ", postitem[i].value);
+		else
+			printf("%c", postitem[i].oper);
+	}
+	printf("\n");
+}
+
+void SplitData::InfixToPre() {
+	MyStack s;
+	preitem_count = 0;
+	int i = 0, j = 0;
+	for(int i = 0; i < item_count; i++) {
+		if(item[i].type == val) {
+			postitem[j] = item[i];
+			j++;
+		}else {
+			if(item[i].oper != '(' && item[i].oper != ')') {
+				if(s.IsEmpty())
+					s.Push(item[i]);
+				else{
+					while(s.a[s.top].priority >= item[i].priority && !s.IsEmpty()) {
+						if(s.a[s.top].priority > 0) {
+							postitem[j] = s.Pop();
+						}else {
+							s.Pop();
+						}
+						j++;
+					}
+					s.Push(item[i]);
+				}
+			}
+		}
+	}
+	while(!s.IsEmpty()) {
+		postitem[j] = s.Pop();
+		j++;
+	}
+	postitem_count = j;
 }
