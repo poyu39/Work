@@ -4,9 +4,9 @@
 int main() {
     long long int num;
     long long int total;
-    while(scanf("%lld", &num)) {
-        total = (num + 1) * (num + 1);
-        total = total * 3 / 2 - 9;
+    while(scanf("%lld", &num) != EOF) {
+        total = num * (num + 1) / 2 + (num + 1) / 2 - 3;
+        total *= 3;
         printf("%lld\n", total);  
     }
     return 0;
