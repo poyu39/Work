@@ -36,8 +36,8 @@ struct Queue {
 void PrnSpace(int);
 
 void Preorder(Node*);
-void Inoreder(Node*);
-void Postoreder(Node*);
+void Inorder(Node*);
+void Postorder(Node*);
 
 int main() {
 	Tree MyTree("a.txt");
@@ -52,11 +52,11 @@ int main() {
     printf("\n");
 
     printf("Inorder: ");
-    Inoreder(head);
+    Inorder(head);
     printf("\n");
 
     printf("Postorder: ");
-    Postoreder(head);
+    Postorder(head);
     printf("\n");
 	return 0;
 } 
