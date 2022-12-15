@@ -58,6 +58,7 @@ int main() {
     printf("Postorder: ");
     Postorder(head);
     printf("\n");
+	system("pause");
 	return 0;
 } 
 
