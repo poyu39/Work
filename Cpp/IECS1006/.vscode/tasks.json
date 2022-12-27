@@ -1,10 +1,9 @@
 {
-    "version": "2.0.0",
     "tasks": [
         {
             "type": "cppbuild",
             "label": "C/C++: g++.exe 建置使用中檔案",
-            "command": "C:\\SDKs\\msys64\\mingw64\\bin\\g++.exe",
+            "command": "C:/MinGW/bin/g++.exe",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
@@ -13,7 +12,7 @@
                 "${fileDirname}\\${fileBasenameNoExtension}.exe"
             ],
             "options": {
-                "cwd": "${fileDirname}"
+                "cwd": "C:/MinGW/bin"
             },
             "problemMatcher": [
                 "$gcc"
@@ -24,5 +23,6 @@
             },
             "detail": "偵錯工具產生的工作。"
         }
-    ]
+    ],
+    "version": "2.0.0"
 }
